@@ -1,0 +1,47 @@
+page {
+  height: 100%;
+}
+
+.layout-container-uni-navbar__placeholder .uni-navbar__placeholder {
+  display: none;
+}
+
+.ios-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.uni-navbar__header .uni-navbar__header-btns.uni-navbar__header-btns-left {
+  width: 120rpx;
+}
+
+.uni-navbar__header-container {
+  justify-content: center;
+}
+
+.uni-navbar__header .uni-navbar__header-btns.uni-navbar__header-btns-right {
+  width: 120rpx;
+}
+
+// 抗锯齿
+view {
+  font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+//抗锯齿
+text {
+  font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+view {
+  background: transparent;
+}

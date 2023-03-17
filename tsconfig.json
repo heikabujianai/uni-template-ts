@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "allowJs": false,
+    "checkJs": true,
+    "noEmit": true,
+    "noImplicitAny": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictNullChecks": true,
+    "lib": [
+      "esnext",
+      "dom",
+      "es2015.promise"
+    ],
+    "types": [
+      "vite/client",
+      "@dcloudio/types",
+      "@types/node",
+      "miniprogram-api-typings",
+      "mini-types"
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
+  },
+  "exclude": ["node_modules", "dist", "src/static"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ]
+}
