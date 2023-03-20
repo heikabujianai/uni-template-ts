@@ -2,8 +2,9 @@ interface DefaultRequestConfigInterface {
   handlerFlag?: boolean; // 是否有自定义message处理
   originOutput?: boolean; // 是否返回原始出参
   originInput?: boolean; // 是否使用原始入参
-  successCode?: string | number; // 成功code
+  successValue?: string | number | boolean; // 成功code
   codeFiled?: string; // code字段
+  falFiled?: string; // code字段
   messageFiled?: string; // message字段
   resultFiled?: string; // 结果字段
   failedMessage?: string; // 默认失败文案

@@ -1,5 +1,5 @@
 import {getRealType, formatUrl} from "@/utils";
-import {BASE_URL, CODE_FILED, EXTRA_HEADER, MESSAGE_FILED, RESULT_FILED, SUCCESS_CODE} from "@/config/request";
+import {BASE_URL, EXTRA_HEADER, MESSAGE_FILED, RESULT_FILED} from "@/config/request";
 import {RequestToast} from "@/common/request/requestToast";
 
 export class Upload {
@@ -12,8 +12,8 @@ export class Upload {
   public header: AnyObject;
 
   constructor(baseUrl = BASE_URL) {
-    this.codeFiled = CODE_FILED;
-    this.successCode = SUCCESS_CODE;
+    this.codeFiled = "";
+    this.successCode = 0;
     this.resultFiled = RESULT_FILED;
     this.messageFiled = MESSAGE_FILED;
     this.baseUrl = baseUrl;

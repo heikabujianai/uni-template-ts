@@ -1,13 +1,15 @@
 import {RequestToast} from "@/common/request/requestToast";
 import {clearEmpty, formatUrl, getNetworkTypeStatus, getRealType,} from "@/utils";
 import {
-  // SUCCESS_CODE,
-  // CODE_FILED,
+  SUCCESS_VALUE,
+  SUCCESS_FILED,
   MESSAGE_FILED,
   FAILED_MESSAGE,
   RESULT_FILED,
   ERROR_MESSAGE,
-  CONSOLE_DETAIL, BASE_URL,
+  CONSOLE_DETAIL,
+  BASE_URL,
+  FAL_FILED,
 } from "@/config/request";
 import {CHECK_LOGIN_API, checkLoginApiHandler} from "@/config/login";
 import {appInfoStore} from "@/store/app";
@@ -21,8 +23,9 @@ export class Request<DED = DefaultExtraDataInterface> {
   private readonly baseUrl: string;
   private requestToast: RequestToast;
   private isShowMessage: boolean;
-  public successCode: string | number | boolean;
-  public codeFiled: string;
+  private readonly successValue: string | number | boolean;
+  private readonly successFiled: string;
+  private readonly falFiled: string;
   public messageFiled: string;
   public resultFiled: string;
   public failedMessage: string;
@@ -41,8 +44,9 @@ export class Request<DED = DefaultExtraDataInterface> {
     this.baseUrl = baseUrl;
     this.isShowMessage = false;
     this.requestToast = new RequestToast();
-    this.successCode = 0;
-    this.codeFiled = "";
+    this.successValue = SUCCESS_VALUE;
+    this.successFiled = SUCCESS_FILED;
+    this.falFiled = FAL_FILED;
     this.messageFiled = MESSAGE_FILED;
     this.resultFiled = RESULT_FILED;
     this.failedMessage = FAILED_MESSAGE;
@@ -102,7 +106,7 @@ export class Request<DED = DefaultExtraDataInterface> {
           method: _options.method,
           header: _options.header,
           data: <AnyObject>_options.data,
-          success: (res) => {
+          success: async (res) => {
             _options.config.consoleDetail && console.log("请求成功");
 
             if (res.statusCode === 200) {
@@ -110,25 +114,33 @@ export class Request<DED = DefaultExtraDataInterface> {
 
               this.logHandler<RESP>(_options, result, startTime);
 
-              const code: string | number | boolean = result[_options.config.codeFiled];
-              if (code === _options.config.successCode) {
+              const code: string | number | boolean = result[_options.config.successFiled];
+              if (code === _options.config.successValue) {
                 _options.config.consoleDetail && console.log("进入成功回调");
                 _options.success && typeof _options.success === "function" && _options.success(<RESP>result[_options.config.resultFiled]);
                 _options.config.showLoading && this.requestToast.hideLoading();
                 resolve(<RESP>result[_options.config.resultFiled]);
               } else {
-                _options.config.consoleDetail && console.log("code码非 " + _options.config.successCode);
+                _options.config.consoleDetail && console.log("code码非 " + _options.config.successValue);
                 _options.config.consoleDetail && console.log("进入错误code默认处理");
-                !_options.config.silent && this.requestToast.showToast({
-                  title: result[_options.config.messageFiled] || _options.config.errorMessage,
-                  duration: _options.config.duration,
-                });
-                _options.config.silent && _options.config.showLoading && this.requestToast.hideLoading();
                 _options.fail && typeof _options.fail === "function" && _options.fail(<AnyObject>result);
-                if (typeof this.responseInterceptor === "function") {
-                  console.clear();
-                  resolve(this.responseInterceptor<AnyObject>(<AnyObject>result));
+
+                if (typeof this.responseInterceptor === "function" && [1].includes(result[_options.config.falFiled])) {
+                  // console.clear();
+                  _options.config.showLoading && this.requestToast.hideLoading();
+                  try {
+                    resolve(await this.responseInterceptor<AnyObject>(<AnyObject>result));
+                  } catch (e) {
+                    console.log(e);
+                    reject(e);
+                  }
                 } else {
+                  !_options.config.silent && this.requestToast.showToast({
+                    title: result[_options.config.messageFiled] || _options.config.errorMessage,
+                    duration: _options.config.duration,
+                  });
+                  _options.config.silent && _options.config.showLoading && this.requestToast.hideLoading();
+
                   reject(<AnyObject>result);
                 }
               }
@@ -189,10 +201,11 @@ export class Request<DED = DefaultExtraDataInterface> {
     );
     _options.config = Object.assign(
       {
-        successCode: this.successCode, // 成功code
-        codeFiled: this.codeFiled, // code字段
+        successValue: this.successValue, // 成功code
+        successFiled: this.successFiled, // code字段
         messageFiled: this.messageFiled, // message字段
         resultFiled: this.resultFiled, // 结果字段
+        falFiled: this.falFiled, // 结果字段
         failedMessage: this.failedMessage, // 默认失败文案
         errorMessage: this.errorMessage, // 默认失败文案
         consoleDetail: this.consoleDetail, // console  配置
@@ -279,7 +292,7 @@ export class Request<DED = DefaultExtraDataInterface> {
     errKey: string | number,
     messageList: AnyObject,
     options: DefaultRequestInterface<REQ> | AnyObject,
-    resolve: (value: | (RESP & { codeFiled: string; handlerFlag: boolean } & AnyObject) | PromiseLike<RESP & { codeFiled: string; handlerFlag: boolean } & AnyObject>) => void,
+    resolve: (value: | (RESP & { successFiled: string; handlerFlag: boolean } & AnyObject) | PromiseLike<RESP & { successFiled: string; handlerFlag: boolean } & AnyObject>) => void,
     reject: (value: RESP | AnyObject) => void
   ) {
     options.config.showLog && console.log("返回结果自定义处理 详见/src/common/request/errMessage.ts");
@@ -301,19 +314,19 @@ export class Request<DED = DefaultExtraDataInterface> {
       // 自定义错误方式回调
       const opt = {
         success: (
-          result: RESP & { codeFiled: string; handlerFlag: boolean } & AnyObject
+          result: RESP & { successFiled: string; handlerFlag: boolean } & AnyObject
         ) => {
           options.config.consoleDetail && console.log("自定义成功函数执行");
-          result.codeFiled = options.config.codeFiled;
+          result.successFiled = options.config.successFiled;
           result.handlerFlag = true;
-          options.success && typeof options.success === "function" && options.success(result, options.config.codeFiled);
+          options.success && typeof options.success === "function" && options.success(result, options.config.successFiled);
           resolve(result);
         },
         fail: (result: AnyObject = {}) => {
           options.config.consoleDetail && console.log("自定义失败函数执行");
-          result.codeFiled = options.config.codeFiled;
+          result.successFiled = options.config.successFiled;
           result.handlerFlag = true;
-          options.fail && typeof options.fail === "function" && options.fail(result, options.config.codeFiled);
+          options.fail && typeof options.fail === "function" && options.fail(result, options.config.successFiled);
           reject(result);
         },
       };
