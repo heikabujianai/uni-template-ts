@@ -10,7 +10,7 @@ import {ref} from "vue";
 import LayoutView from "@/components/layoutView/layoutView.vue";
 
 const content = ref<string>("");
-example<string>().then(data => {
+example<string, { test: number }>({test: 22222}).then(data => {
   console.log("example=>", data);
   content.value = data;
 }).catch(err => {

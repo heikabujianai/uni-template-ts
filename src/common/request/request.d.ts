@@ -1,10 +1,7 @@
 interface DefaultRequestConfigInterface {
-  handlerFlag?: boolean; // 是否有自定义message处理
-  originOutput?: boolean; // 是否返回原始出参
-  originInput?: boolean; // 是否使用原始入参
   successValue?: string | number | boolean; // 成功code
-  codeFiled?: string; // code字段
-  falFiled?: string; // code字段
+  successFiled?: string; // 成功code字段
+  falFiled?: string; // 失败code字段
   messageFiled?: string; // message字段
   resultFiled?: string; // 结果字段
   failedMessage?: string; // 默认失败文案
@@ -16,6 +13,8 @@ interface DefaultRequestConfigInterface {
   loadingTitle?: string; // loading显示时的文案
   duration?: number; // toast持续时间
   baseUrl?: string; // 基础地址
+  errCodeList?: Array<number | string>; // 错误代码数组
+  failCodeMap?: { [key: string | number]: string }; // HTTP错误码
 }
 
 interface DefaultRequestInterface<T = AnyObject> {
@@ -33,9 +32,6 @@ interface DefaultRequestInterface<T = AnyObject> {
   data?: T;
   config?: DefaultRequestConfigInterface;
   isError?: boolean;
-  fail?: (error: AnyObject | string, errCodeFiled?: string) => void;
-  success?: (data: T, successCodeFiled?: string) => void;
-  complete?: (data: T | string | AnyObject) => void;
 }
 
 interface DefaultExtraDataInterface {
