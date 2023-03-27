@@ -1,4 +1,4 @@
-import {useReauestToast} from "@/common/request/requestToast";
+import {showLoading, hideLoading, showToast} from "@/common/request/requestToast";
 import {clearEmpty, formatUrl, getNetworkTypeStatus, getRealType,} from "@/utils";
 import {
   SUCCESS_VALUE,
@@ -19,22 +19,21 @@ import {appInfoStore} from "@/store/app";
 const appInfo = appInfoStore();
 
 export function useRequest(baseUrl: string = BASE_URL) {
-  const {showLoading, hideLoading, showToast} = useReauestToast();
 
-  type interceptorType = {
+  type InterceptorType = {
     response: null | (<T = AnyObject>(options: T) => any)
   }
 
-  type extraType = {
+  type ExtraType = {
     extraData: (<T = AnyObject>() => DefaultExtraDataInterface | T),
     extraHeader: (<T = AnyObject>() => AnyObject | T)
   }
 
-  const interceptor: interceptorType = {
+  const interceptor: InterceptorType = {
     response: null
   };
 
-  const extraConfig: extraType = {
+  const extraConfig: ExtraType = {
     extraData: EXTRA_DATA,
     extraHeader: EXTRA_HEADER,
   };
@@ -58,7 +57,7 @@ export function useRequest(baseUrl: string = BASE_URL) {
     failCodeMap: FAIL_CODE_MAP, // http错误码集合
   };
 
-  function setConfig(options: { config?: DefaultRequestConfigInterface, interceptor?: interceptorType, extraConfig?: extraType }) {
+  function setConfig(options: { config?: DefaultRequestConfigInterface, interceptor?: InterceptorType, extraConfig?: ExtraType }) {
     Object.assign(defaultConfig, options.config);
     Object.assign(interceptor, options.interceptor);
     Object.assign(extraConfig, options.extraConfig);

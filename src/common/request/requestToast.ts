@@ -49,55 +49,46 @@ export class RequestToast {
   }
 }
 
+let loadingTimes = 0;
 
-export function useReauestToast() {
-  let loadingTimes = 0;
-
-  /**
-   * 展示loading
-   * @param option
-   */
-  function showLoading(option: RequestToastInterface) {
-    if (!loadingTimes) {
-      uni.showLoading({
-        title: option.title,
-        mask: true,
-        success() {
-          appInfo.setIsShow(true);
-        }
-      });
-    }
-    ++loadingTimes;
+/**
+ * 展示loading
+ * @param option
+ */
+export function showLoading(option: RequestToastInterface) {
+  if (!loadingTimes) {
+    uni.showLoading({
+      title: option.title,
+      mask: true,
+      success() {
+        appInfo.setIsShow(true);
+      }
+    });
   }
+  ++loadingTimes;
+}
 
-  function hideLoading() {
-    loadingTimes > 0 && --loadingTimes;
-    if (!loadingTimes) {
-      uni.hideLoading();
-      uni.stopPullDownRefresh();
-      appInfo.setIsShow(false);
-    }
+export function hideLoading() {
+  loadingTimes > 0 && --loadingTimes;
+  if (!loadingTimes) {
+    uni.hideLoading();
+    uni.stopPullDownRefresh();
+    appInfo.setIsShow(false);
   }
+}
 
-  function showToast(option: RequestToastInterface & { success?: () => void; fail?: () => void }) {
-    loadingTimes > 0 && --loadingTimes;
-    if (!loadingTimes) {
-      uni.showToast({
-        icon: "none",
-        title: option.title,
-        mask: true,
-        duration: option.duration || DEFAULT_TOAST_DURATION,
-        success: () => {
-          appInfo.setIsShow(false);
-          option.success && typeof option.success === "function" && option.success();
-        }
-      });
-    }
+export function showToast(option: RequestToastInterface & { success?: () => void; fail?: () => void }) {
+  loadingTimes > 0 && --loadingTimes;
+  if (!loadingTimes) {
+    uni.showToast({
+      icon: "none",
+      title: option.title,
+      mask: true,
+      duration: option.duration || DEFAULT_TOAST_DURATION,
+      success: () => {
+        appInfo.setIsShow(false);
+        option.success && typeof option.success === "function" && option.success();
+      }
+    });
   }
-
-  return {
-    showLoading,
-    hideLoading,
-    showToast,
-  };
 }

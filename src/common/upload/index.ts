@@ -1,15 +1,71 @@
 import {getRealType, formatUrl} from "@/utils";
-import {BASE_URL, EXTRA_HEADER, MESSAGE_FILED, RESULT_FILED} from "@/config/request";
-import {RequestToast} from "@/common/request/requestToast";
+import {
+  BASE_URL, CONSOLE_DETAIL, ERROR_MESSAGE,
+  EXTRA_DATA,
+  EXTRA_HEADER, FAILED_MESSAGE, FAL_FILED,
+  MESSAGE_FILED,
+  RESULT_FILED,
+  SUCCESS_FILED,
+  SUCCESS_VALUE
+} from "@/config/request";
+import {RequestToast, showLoading, hideLoading, showToast} from "@/common/request/requestToast";
+
+export function useUpload(baseUrl: string = BASE_URL) {
+  console.log(showLoading, hideLoading, showToast);
+  type ConfigType = {
+    successValue?: string | number | boolean // 成功code
+    successFiled?: string // 成功code字段
+    falFiled?: string // 失败code字段
+    messageFiled?: string // message字段
+    resultFiled?: string // 结果字段
+    failedMessage?: string // 默认失败文案
+    errorMessage?: string // 默认失败文案
+    consoleDetail?: boolean // 是否打印详细console信息
+    baseUrl: string
+    header: AnyObject
+  }
+  type ExtraType = {
+    extraData: (<T = AnyObject>() => DefaultExtraDataInterface | T)
+    extraHeader: (<T = AnyObject>() => AnyObject | T)
+  }
+
+  const config: ConfigType = {
+    baseUrl: baseUrl,
+    successValue: SUCCESS_VALUE,
+    successFiled: SUCCESS_FILED,
+    falFiled: FAL_FILED,
+    messageFiled: MESSAGE_FILED,
+    resultFiled: RESULT_FILED,
+    failedMessage: FAILED_MESSAGE,
+    errorMessage: ERROR_MESSAGE,
+    consoleDetail: CONSOLE_DETAIL,
+    header: {}
+  };
+
+  const extraConfig: ExtraType = {
+    extraData: EXTRA_DATA,
+    extraHeader: EXTRA_HEADER,
+  };
+
+
+  function setConfig(option: { config?: ConfigType, extraConfig?: ExtraType }) {
+    Object.assign(config, option.config);
+    Object.assign(extraConfig, option.extraConfig);
+  }
+
+  function upload<rep>(options: { url: string, filePath: string, name: string, formData?: AnyObject, header?: AnyObject }): Promise<rep> {
+
+  }
+}
 
 export class Upload {
-  private readonly baseUrl: string;
-  private readonly uploadLoading: RequestToast;
-  public codeFiled: string;
-  public successCode: string | number | boolean;
-  public resultFiled: string;
-  public messageFiled: string;
-  public header: AnyObject;
+  private readonly baseUrl: string
+  private readonly uploadLoading: RequestToast
+  public codeFiled: string
+  public successCode: string | number | boolean
+  public resultFiled: string
+  public messageFiled: string
+  public header: AnyObject
 
   constructor(baseUrl = BASE_URL) {
     this.codeFiled = "";
