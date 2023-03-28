@@ -44,10 +44,11 @@ interface RequestToastInterface {
 }
 
 /**
- * 初始化参数
+ * 上传图片参数
  */
-interface RequestOptions {
-  baseUrl?: string;
-  publicKey?: string;
-  appKey?: string;
+interface DefaultUploadInterface {
+  filePath: string | string[]
+  name: string
+  formData?: AnyObject
+  header?: AnyObject
 }

@@ -57,7 +57,7 @@ export function useRequest(baseUrl: string = BASE_URL) {
     failCodeMap: FAIL_CODE_MAP, // http错误码集合
   };
 
-  function setConfig(options: { config?: DefaultRequestConfigInterface, interceptor?: InterceptorType, extraConfig?: ExtraType }) {
+  function setRequestConfig(options: { config?: DefaultRequestConfigInterface, interceptor?: InterceptorType, extraConfig?: ExtraType }) {
     Object.assign(defaultConfig, options.config);
     Object.assign(interceptor, options.interceptor);
     Object.assign(extraConfig, options.extraConfig);
@@ -152,7 +152,7 @@ export function useRequest(baseUrl: string = BASE_URL) {
   }
 
 
-  async function request<RESP = AnyObject, REQ = AnyObject>(url: string, options: DefaultRequestInterface<REQ>, config?: DefaultRequestConfigInterface): Promise<RESP> {
+  async function requestHandler<RESP = AnyObject, REQ = AnyObject>(url: string, options: DefaultRequestInterface<REQ>, config?: DefaultRequestConfigInterface): Promise<RESP> {
     let startTime: number | null;
     if (import.meta.env.VITE_APP_ENV === "production") {
       startTime = null;
@@ -250,7 +250,7 @@ export function useRequest(baseUrl: string = BASE_URL) {
 
 
   return {
-    request,
-    setConfig
+    requestHandler,
+    setRequestConfig
   };
 }
